@@ -39,7 +39,7 @@ def test_user_fixtures(
     
     # Test admin user
     assert test_admin_user.username == "admin"
-    assert test_admin_user.role == "admin"
+    assert test_admin_user.role.value == "admin"  # Сравниваем значение enum
     assert test_admin_user.is_active is True
 
 

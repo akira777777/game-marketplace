@@ -76,12 +76,13 @@ def test_user_creation_isolation(db_session: Session):
     db_session.commit()
     
     # Проверяем что он создался
+    # Check that the user was created within this transaction
     count = db_session.execute(
         text("SELECT COUNT(*) FROM users WHERE username = :username"),
-        {"username": "isolation_test_user"}
+        {"username": "isolation_user"}  # Правильное имя пользователя
     ).scalar()
     
-    assert count == 1
+    assert count == 1  # Пользователь есть в текущей транзакции
 
 
 def test_isolation_check(db_session: Session):
