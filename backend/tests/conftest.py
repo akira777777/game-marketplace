@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.main import app  # noqa: E402
 from app.core.database import Base, get_db  # noqa: E402
-from app.core.auth import create_access_token, get_password_hash  # noqa: E402
+from app.core.auth import create_access_token  # noqa: E402
 from app.models import User, Game, Lot, Category  # noqa: E402
 
 
@@ -99,7 +99,7 @@ def test_user_data() -> Dict[str, Any]:
     return {
         "username": "testuser",
         "email": "test@example.com",
-        "password": "TestPass123!",  # Короткий пароль для тестов
+        "password": "1",  # Короткий пароль для тестов
         "display_name": "Test User",
         "bio": "Test user bio",
     }
@@ -111,7 +111,7 @@ def test_user(db_session: Session, test_user_data: Dict[str, Any]) -> User:
     user = User(
         username=test_user_data["username"],
         email=test_user_data["email"],
-        hashed_password=get_password_hash(test_user_data["password"]),
+        hashed_password=f"mock_hash_{test_user_data['password']}",
         display_name=test_user_data.get("display_name"),
         bio=test_user_data.get("bio"),
         is_active=True,
@@ -128,9 +128,9 @@ def test_admin_user(db_session: Session) -> User:
     user = User(
         username="admin",
         email="admin@example.com",
-        hashed_password=get_password_hash("AdminPassword123!"),
+        hashed_password="mock_hash_Admin123!",  # Mock хеш пароля
         display_name="Admin User",
-        role="admin",
+        role="ADMIN",  # Используем правильный enum
         is_active=True,
     )
     db_session.add(user)

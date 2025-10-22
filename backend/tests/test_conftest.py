@@ -99,12 +99,11 @@ def test_temp_file_fixture(temp_file):
 def test_database_isolation(db_session: Session):
     """Test that database changes are isolated between tests."""
     # Add a user to the database
-    from app.core.auth import get_password_hash
     
     user = User(
         username="isolation_test",
         email="isolation@test.com",
-        hashed_password=get_password_hash("password"),
+        hashed_password="mock_hash_testpass",  # Mock хеш для тестов
         is_active=True,
     )
     db_session.add(user)
