@@ -3,23 +3,25 @@
 import os
 import sys
 import tempfile
-from typing import Generator, Dict, Any
+from typing import Generator, Dict, Any, Callable
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
+from pytest import MonkeyPatch
 
-sys.path.insert(0, os.path.abspath(".."))  # noqa: E402
+# Добавляем путь к модулю app
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from backend.app.main import app  # noqa: E402
-from backend.app.core.database import Base, get_db  # noqa: E402
-from backend.app.core.auth import create_access_token  # noqa: E402
-from backend.app.models import User, Game, Lot, Category  # noqa: E402
+from app.main import app  # noqa: E402
+from app.core.database import Base, get_db  # noqa: E402
+from app.core.auth import create_access_token, get_password_hash  # noqa: E402
+from app.models import User, Game, Lot, Category  # noqa: E402
 
 
-# Test database configuration
-SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test_gamemp.db"  # noqa: E501
+# Test database configuration - используем in-memory SQLite для тестов
+SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
     SQLALCHEMY_TEST_DATABASE_URL,
@@ -27,9 +29,12 @@ engine = create_engine(
         "check_same_thread": False,
     },
     poolclass=StaticPool,
+    echo=False,  # Отключаем логирование SQL для тестов
 )
 
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+TestingSessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=engine
+)
 
 
 @pytest.fixture(scope="session")
@@ -45,13 +50,14 @@ def test_db() -> Generator[Session, None, None]:
 
 
 @pytest.fixture(scope="function")
-def db_session(test_db: Session) -> Generator[Session, None, None]:
-    """Create clean database session for each test."""
-    connection = test_db.bind.connect()
+def db_session() -> Generator[Session, None, None]:
+    """Create clean database session for each test with transaction rollback."""
+    connection = engine.connect()
     transaction = connection.begin()
-
+    
+    # Bind session to connection
     session = TestingSessionLocal(bind=connection)
-
+    
     try:
         yield session
     finally:
@@ -68,6 +74,7 @@ def client(db_session: Session) -> Generator[TestClient, None, None]:
         try:
             yield db_session
         finally:
+            # Cleanup handled by db_session fixture
             pass
 
     app.dependency_overrides[get_db] = override_get_db
