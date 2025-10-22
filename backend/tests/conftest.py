@@ -12,10 +12,10 @@ from sqlalchemy.pool import StaticPool
 
 sys.path.insert(0, os.path.abspath(".."))  # noqa: E402
 
-from app.main import app  # noqa: E402
-from app.core.database import Base, get_db  # noqa: E402
-from app.core.auth import create_access_token  # noqa: E402
-from app.models import User, Game, Lot, Category  # noqa: E402
+from backend.app.main import app  # noqa: E402
+from backend.app.core.database import Base, get_db  # noqa: E402
+from backend.app.core.auth import create_access_token  # noqa: E402
+from backend.app.models import User, Game, Lot, Category  # noqa: E402
 
 
 # Test database configuration
