@@ -3,6 +3,7 @@ Core application settings and configuration
 """
 
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import Optional, List
 import os
 
@@ -55,10 +56,11 @@ class Settings(BaseSettings):
     # Rate limiting
     RATE_LIMIT_PER_MINUTE: int = 60
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-        extra = "ignore"  # Игнорировать дополнительные переменные окружения
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"  # Игнорировать дополнительные переменные окружения
+    )  # Игнорировать дополнительные переменные окружения
 
 
 # Create settings instance
