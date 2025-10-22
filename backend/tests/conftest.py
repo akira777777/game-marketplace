@@ -1,23 +1,25 @@
 """Test configuration and fixtures for pytest."""
 
 import os
+import sys
 import tempfile
 from typing import Generator, Dict, Any
 import pytest
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 
-from backend.app.main import app
-from backend.app.core.database import Base, get_db
-from backend.app.core.auth import create_access_token
-from backend.app.models import User, Game, Lot, Category
+sys.path.insert(0, os.path.abspath(".."))  # noqa: E402
+
+from app.main import app  # noqa: E402
+from app.core.database import Base, get_db  # noqa: E402
+from app.core.auth import create_access_token  # noqa: E402
+from app.models import User, Game, Lot, Category  # noqa: E402
 
 
 # Test database configuration
-SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test_gamemp.db"
+SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test_gamemp.db"  # noqa: E501
 
 engine = create_engine(
     SQLALCHEMY_TEST_DATABASE_URL,
@@ -90,7 +92,7 @@ def test_user_data() -> Dict[str, Any]:
 @pytest.fixture
 def test_user(db_session: Session, test_user_data: Dict[str, Any]) -> User:
     """Create test user in database."""
-    from backend.app.core.auth import get_password_hash
+    from app.core.auth import get_password_hash
 
     user = User(
         username=test_user_data["username"],
@@ -108,7 +110,7 @@ def test_user(db_session: Session, test_user_data: Dict[str, Any]) -> User:
 @pytest.fixture
 def test_admin_user(db_session: Session) -> User:
     """Create test admin user."""
-    from backend.app.core.auth import get_password_hash
+    from app.core.auth import get_password_hash
 
     user = User(
         username="admin",
@@ -246,9 +248,9 @@ def mock_external_services(monkeypatch):
     def mock_process_payment(*args, **kwargs):
         return {"status": "success", "transaction_id": "test_123"}
 
-    monkeypatch.setattr("backend.app.services.email.send_email", mock_send_email)
-    monkeypatch.setattr("backend.app.services.storage.upload_file", mock_upload_file)
-    monkeypatch.setattr(
+    monkeypatch.setattr("backend.app.services.email.send_email", mock_send_email)  # noqa: E501
+    monkeypatch.setattr("backend.app.services.storage.upload_file", mock_upload_file)  # noqa: E501
+    monkeypatch.setattr(  # noqa: E501
         "backend.app.services.payments.process_payment", mock_process_payment
     )
 

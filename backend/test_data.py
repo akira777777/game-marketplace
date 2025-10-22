@@ -7,10 +7,10 @@ import os
 import hashlib
 from sqlalchemy.orm import Session
 
-sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath(".."))  # noqa: E402
 
-from app.core.database import get_db
-from app.models import User, Game, Lot
+from app.core.database import get_db  # noqa: E402
+from app.models import User, Game, Lot  # noqa: E402
 
 
 def simple_hash(password: str) -> str:

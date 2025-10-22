@@ -5,10 +5,10 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath(".."))  # noqa: E402
 
-from app.core.database import get_db
-from app.models import Lot
+from app.core.database import get_db  # noqa: E402
+from app.models import Lot  # noqa: E402
 from sqlalchemy.orm import Session
 
 
