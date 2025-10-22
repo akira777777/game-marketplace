@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./gamemarket.db"
     DATABASE_URL_ASYNC: str = "sqlite+aiosqlite:///./gamemarket.db"
+    DATABASE_ECHO: bool = False
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
