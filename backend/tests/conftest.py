@@ -3,7 +3,7 @@
 import os
 import sys
 import tempfile
-from typing import Generator, Dict, Any, Callable
+from typing import Generator, Dict, Any
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -92,20 +92,20 @@ def test_user_data() -> Dict[str, Any]:
         "username": "testuser",
         "email": "test@example.com",
         "password": "TestPassword123!",
-        "full_name": "Test User",
+        "display_name": "Test User",
+        "bio": "Test user bio",
     }
 
 
 @pytest.fixture
 def test_user(db_session: Session, test_user_data: Dict[str, Any]) -> User:
     """Create test user in database."""
-    from app.core.auth import get_password_hash
-
     user = User(
         username=test_user_data["username"],
         email=test_user_data["email"],
         hashed_password=get_password_hash(test_user_data["password"]),
-        full_name=test_user_data.get("full_name"),
+        display_name=test_user_data.get("display_name"),
+        bio=test_user_data.get("bio"),
         is_active=True,
     )
     db_session.add(user)
@@ -117,13 +117,11 @@ def test_user(db_session: Session, test_user_data: Dict[str, Any]) -> User:
 @pytest.fixture
 def test_admin_user(db_session: Session) -> User:
     """Create test admin user."""
-    from app.core.auth import get_password_hash
-
     user = User(
         username="admin",
         email="admin@example.com",
         hashed_password=get_password_hash("AdminPassword123!"),
-        full_name="Admin User",
+        display_name="Admin User",
         role="admin",
         is_active=True,
     )
@@ -240,26 +238,40 @@ def temp_file() -> Generator[str, None, None]:
 
 
 @pytest.fixture(autouse=True)
-def mock_external_services(monkeypatch):
+def mock_external_services(monkeypatch: MonkeyPatch) -> None:
     """Mock external services for testing."""
 
-    # Mock email service
-    def mock_send_email(*args, **kwargs):
-        return True
+    # Mock email service (если существует)
+    def mock_send_email(*args: Any, **kwargs: Any) -> Dict[str, str]:
+        return {"status": "sent", "message_id": "test_123"}
 
-    # Mock file storage service
-    def mock_upload_file(*args, **kwargs):
+    # Mock file storage service (если существует)
+    def mock_upload_file(*args: Any, **kwargs: Any) -> str:
         return "http://example.com/test-image.jpg"
 
-    # Mock payment service
-    def mock_process_payment(*args, **kwargs):
+    # Mock payment service (если существует)
+    def mock_process_payment(*args: Any, **kwargs: Any) -> Dict[str, str]:
         return {"status": "success", "transaction_id": "test_123"}
 
-    monkeypatch.setattr("backend.app.services.email.send_email", mock_send_email)  # noqa: E501
-    monkeypatch.setattr("backend.app.services.storage.upload_file", mock_upload_file)  # noqa: E501
-    monkeypatch.setattr(  # noqa: E501
-        "backend.app.services.payments.process_payment", mock_process_payment
-    )
+    # Применяем моки только если модули существуют
+    try:
+        monkeypatch.setattr("app.services.email.send_email", mock_send_email)
+    except (ImportError, AttributeError):
+        pass
+
+    try:
+        monkeypatch.setattr(
+            "app.services.storage.upload_file", mock_upload_file
+        )
+    except (ImportError, AttributeError):
+        pass
+
+    try:
+        monkeypatch.setattr(
+            "app.services.payments.process_payment", mock_process_payment
+        )
+    except (ImportError, AttributeError):
+        pass
 
 
 # Test markers
@@ -275,10 +287,20 @@ def integration_test(func):
 
 
 def slow_test(func):
-    """Mark test as slow."""
+    """Mark test as slow test."""
     return pytest.mark.slow(func)
 
 
 def unit_test(func):
     """Mark test as unit test."""
     return pytest.mark.unit(func)
+
+
+def api_test(func):
+    """Mark test as API test."""
+    return pytest.mark.api(func)
+
+
+def auth_test(func):
+    """Mark test as authentication test."""
+    return pytest.mark.auth(func)
