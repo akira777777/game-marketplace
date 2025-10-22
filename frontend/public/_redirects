@@ -1,0 +1,5 @@
+# SPA fallback - все запросы перенаправляются на index.html (кроме файлов)
+/*    /index.html   200
+
+# API проксирование (при необходимости)
+# /api/*  https://your-backend-url.herokuapp.com/api/:splat  200
