@@ -49,6 +49,14 @@ def test_db() -> Generator[Session, None, None]:
         Base.metadata.drop_all(bind=engine)
 
 
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_db():
+    """Setup test database once per session."""
+    Base.metadata.create_all(bind=engine)
+    yield
+    Base.metadata.drop_all(bind=engine)
+
+
 @pytest.fixture(scope="function")
 def db_session() -> Generator[Session, None, None]:
     """Create clean database session for each test with transaction rollback."""
@@ -148,12 +156,14 @@ def test_admin_headers(test_admin_user: User) -> Dict[str, str]:
 @pytest.fixture
 def test_game_data() -> Dict[str, Any]:
     """Test game data."""
+    from datetime import date
     return {
         "name": "Test Game",
+        "slug": "test-game",
         "description": "A test game for testing purposes",
         "developer": "Test Developer",
         "publisher": "Test Publisher",
-        "release_date": "2023-01-01",
+        "release_date": date(2023, 1, 1),
         "is_active": True,
     }
 
