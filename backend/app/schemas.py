@@ -89,7 +89,7 @@ class UserLogin(BaseSchema):
 
 
 # Token schemas
-class Token(BaseSchema):
+class TokenResponse(BaseSchema):
     """Token response schema"""
 
     access_token: str
@@ -111,7 +111,7 @@ class TokenData(BaseSchema):
     username: str
 
 
-class Message(BaseSchema):
+class GenericMessage(BaseSchema):
     """Generic message response schema"""
 
     message: str
@@ -177,7 +177,7 @@ class GameUpdate(BaseSchema):
 
 class Game(GameBase):
     id: int
-    slug: str
+    slug: Optional[str] = None
     image_url: Optional[str] = None
     icon_url: Optional[str] = None
     total_lots: int

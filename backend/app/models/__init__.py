@@ -17,7 +17,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from enum import Enum as PyEnum
-from datetime import datetime
+
 from ..core.database import Base
 
 
@@ -110,7 +110,7 @@ class Game(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False, index=True)
-    slug = Column(String(100), unique=True, index=True)
+    slug = Column(String(100), unique=True, index=True, nullable=True)
     description = Column(Text)
     image_url = Column(String(255))
     icon_url = Column(String(255))
