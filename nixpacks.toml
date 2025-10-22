@@ -1,8 +1,18 @@
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip"]
+nixPkgs = [
+  "python311",
+  "python311Packages.pip",
+  "postgresql",
+  "libpqxx",
+  "gcc"
+]
 
 [phases.install]
-cmds = ["cd backend && pip install -r requirements.txt"]
+cmds = [
+  "apt-get update",
+  "apt-get install -y postgresql-client libpq-dev",
+  "cd backend && pip install --break-system-packages -r requirements.txt"
+]
 
 [phases.build]
 cmds = ["cd backend && python -c 'import app.main'"]  # простая проверка импорта

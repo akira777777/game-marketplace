@@ -9,6 +9,9 @@ alembic==1.13.0
 psycopg2-binary==2.9.9
 asyncpg==0.29.0
 
+# System dependencies for PostgreSQL
+# Note: Railway provides PostgreSQL, but we need system packages for psycopg2
+
 # Authentication & Security
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
