@@ -207,8 +207,7 @@ def test_lot_data() -> Dict[str, Any]:
         "title": "Test Lot",
         "description": "A test lot for testing",
         "price": 29.99,
-        "quantity": 1,
-        "is_active": True,
+        "status": "ACTIVE",  # Используем enum статус
     }
 
 
