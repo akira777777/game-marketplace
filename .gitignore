@@ -47,8 +47,9 @@ logs/
 *.log
 
 # Static files
-static/uploads/
-uploads/
+static/uploads/*
+!static/uploads/.gitkeep
+!static/README.md
 
 # IDE
 .vscode/
