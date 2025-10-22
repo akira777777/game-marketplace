@@ -99,7 +99,7 @@ def test_user_data() -> Dict[str, Any]:
     return {
         "username": "testuser",
         "email": "test@example.com",
-        "password": "TestPassword123!",
+        "password": "TestPass123!",  # Короткий пароль для тестов
         "display_name": "Test User",
         "bio": "Test user bio",
     }
