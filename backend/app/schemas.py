@@ -50,7 +50,8 @@ class UserBase(BaseSchema):
 class UserCreate(UserBase):
     """Schema for creating a new user"""
 
-    password: str = Field(..., min_length=8, description="User password")
+    password: str = Field(..., min_length=8, max_length=72, description="User password")
+    phone: Optional[str] = Field(None, pattern=r"^\+?[1-9]\d{1,14}$")
 
 
 class UserUpdate(BaseSchema):

@@ -25,7 +25,7 @@ def test_admin_user_fixture(test_admin_user: User):
     assert test_admin_user.id is not None
     assert test_admin_user.username == "admin"
     assert test_admin_user.email == "admin@example.com"
-    assert test_admin_user.role == "admin"
+    assert test_admin_user.role.value == "admin"  # Сравниваем значение enum
     assert test_admin_user.is_active is True
 
 

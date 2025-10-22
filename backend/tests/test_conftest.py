@@ -1,8 +1,14 @@
 """Test conftest fixtures and basic functionality."""
 
+import os
+import sys
+from typing import Any, Dict
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+
+# Добавляем путь к модулю app
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.models import User, Game, Category, Lot
 
@@ -10,7 +16,7 @@ from app.models import User, Game, Category, Lot
 def test_db_session_fixture(db_session: Session):
     """Test database session fixture works."""
     from sqlalchemy import text
-    
+
     assert db_session is not None
     # Test that we can execute a simple query
     result = db_session.execute(text("SELECT 1")).scalar()
@@ -27,79 +33,83 @@ def test_client_fixture(client: TestClient):
 
 
 def test_user_fixtures(
-    test_user: User, 
-    test_admin_user: User, 
-    test_user_data: dict
+    test_user: User,
+    test_admin_user: User,
+    test_user_data: Dict[str, Any]
 ):
     """Test user fixtures work correctly."""
     # Test regular user
-    assert test_user.username == test_user_data["username"]
-    assert test_user.email == test_user_data["email"]
+    assert str(test_user.username) == test_user_data["username"]
+    assert str(test_user.email) == test_user_data["email"]
     assert test_user.is_active is True
-    
+
     # Test admin user
-    assert test_admin_user.username == "admin"
+    assert str(test_admin_user.username) == "admin"
     assert test_admin_user.role.value == "admin"  # Сравниваем значение enum
     assert test_admin_user.is_active is True
 
 
-def test_auth_headers_fixtures(test_auth_headers, test_admin_headers):
+def test_auth_headers_fixtures(
+    test_auth_headers: Dict[str, str],
+    test_admin_headers: Dict[str, str]
+):
     """Test authentication header fixtures."""
     # Test user headers
     assert "Authorization" in test_auth_headers
-    assert test_auth_headers["Authorization"].startswith("Bearer ")
-    
+    assert str(test_auth_headers["Authorization"]).startswith("Bearer ")
+
     # Test admin headers
     assert "Authorization" in test_admin_headers
-    assert test_admin_headers["Authorization"].startswith("Bearer ")
+    assert str(test_admin_headers["Authorization"]).startswith("Bearer ")
 
 
-def test_game_fixture(test_game: Game, test_game_data: dict):
+def test_game_fixture(test_game: Game, test_game_data: Dict[str, Any]):
     """Test game fixture works correctly."""
-    assert test_game.name == test_game_data["name"]
-    assert test_game.developer == test_game_data["developer"]
+    assert str(test_game.name) == test_game_data["name"]
+    assert str(test_game.developer) == test_game_data["developer"]
     assert test_game.is_active is True
 
 
 def test_category_fixture(test_category: Category, test_game: Game):
     """Test category fixture works correctly."""
-    assert test_category.name == "Test Category"
+    assert str(test_category.name) == "Test Category"
     assert test_category.game_id == test_game.id
     assert test_category.is_active is True
 
 
 def test_lot_fixture(
-    test_lot: Lot, 
-    test_user: User, 
-    test_game: Game, 
+    test_lot: Lot,
+    test_user: User,
+    test_game: Game,
     test_category: Category
 ):
     """Test lot fixture works correctly."""
-    assert test_lot.title == "Test Lot"
+    assert str(test_lot.title) == "Test Lot"
     assert test_lot.seller_id == test_user.id
     assert test_lot.game_id == test_game.id
     assert test_lot.category_id == test_category.id
-    assert test_lot.price == 29.99
+    from decimal import Decimal
+    assert test_lot.price == Decimal("29.99")  # Сравниваем с Decimal
 
 
-def test_temp_file_fixture(temp_file):
+def test_temp_file_fixture(temp_file: str):
     """Test temporary file fixture."""
     import os
-    
+
     assert os.path.exists(temp_file)
     assert temp_file.endswith('.jpg')
-    
+
     # Verify file has content
     with open(temp_file, 'rb') as f:
         content = f.read()
         assert len(content) > 0
 
 
-@pytest.mark.integration  
+@pytest.mark.integration
 def test_database_isolation(db_session: Session):
     """Test that database changes are isolated between tests."""
     # Add a user to the database
-    
+
     user = User(
         username="isolation_test",
         email="isolation@test.com",
@@ -108,13 +118,13 @@ def test_database_isolation(db_session: Session):
     )
     db_session.add(user)
     db_session.commit()
-    
+
     # Verify user exists
     found_user = db_session.query(User).filter(
         User.username == "isolation_test"
     ).first()
     assert found_user is not None
-    assert found_user.username == "isolation_test"
+    assert str(found_user.username) == "isolation_test"
 
 
 def test_database_isolation_check(db_session: Session):
@@ -127,17 +137,17 @@ def test_database_isolation_check(db_session: Session):
 
 
 @pytest.mark.api
-def test_api_with_auth(client: TestClient, test_auth_headers):
+def test_api_with_auth(client: TestClient, test_auth_headers: Dict[str, str]):
     """Test API endpoints with authentication."""
     # This is a template for API tests
     # Replace with actual API endpoints when they exist
-    
+
     # Example: Test user profile endpoint
     # response = client.get("/api/v1/users/me", headers=test_auth_headers)
     # assert response.status_code == 200
-    
+
     # For now, just test that headers are properly formatted
     assert "Authorization" in test_auth_headers
-    token = test_auth_headers["Authorization"]
+    token = str(test_auth_headers["Authorization"])
     assert token.startswith("Bearer ")
     assert len(token) > 10  # Should have actual token content
