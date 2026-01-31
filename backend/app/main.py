@@ -46,9 +46,7 @@ allowed_origins: List[str] = getattr(settings, "CORS_ORIGINS", ["*"])
 # Настройка CORS для production и development
 cors_origins = ["http://localhost:3000", "http://localhost:4000"]
 if os.getenv("ENVIRONMENT") == "production":
-    cors_origins.extend(getattr(settings, "CORS_ORIGINS", [
-        "https://cheerful-cocada-c90721.netlify.app"
-    ]))
+    cors_origins.extend(getattr(settings, "CORS_ORIGINS", []))
 
 app.add_middleware(
     CORSMiddleware,

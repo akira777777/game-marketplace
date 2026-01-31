@@ -1,31 +1,44 @@
 # 🎮 GameMarketplace
 
 > **Статус:** ✅ Готов к production  
-> **Frontend:** [Развернут на Netlify](https://cheerful-cocada-c90721.netlify.app)  
-> **Backend:** Готов к развертыванию на Railway  
+> **Deployment:** [Vercel](https://vercel.com)
+> **Database:** [Neon (PostgreSQL)](https://neon.tech)
 
 Full-stack торговая площадка для игровых товаров с современным стеком технологий.
 
-## 🚀 Live Demo
+## 🚀 Deployment
 
-- **🌐 Frontend**: https://cheerful-cocada-c90721.netlify.app
-- **📡 Backend**: Развертывается на Railway (см. инструкцию ниже)
+Проект оптимизирован для развертывания на **Vercel** с использованием базы данных **Neon**.
+
+### Настройка Backend (Vercel + Neon)
+
+1. Создайте базу данных на [Neon.tech](https://neon.tech).
+2. В настройках Vercel добавьте следующие переменные окружения:
+   ```env
+   DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/dbname?sslmode=require
+   SECRET_KEY=your-secret-key
+   ENVIRONMENT=production
+   ```
+
+### Настройка Frontend (Vercel)
+
+Frontend автоматически подхватывает настройки из `vercel.json` в корне проекта.
 
 ## 🛠 Технологический стек
 
 ### Frontend
 - ⚛️ **React 18** + TypeScript
-- ⚡ **Vite** (сборка за 2 секунды)
-- 🎨 **Tailwind CSS** (современный дизайн)
-- 🔄 **Zustand** (управление состоянием)
-- 📦 **Deployment**: Netlify (автодеплой)
+- ⚡ **Vite**
+- 🎨 **Tailwind CSS**
+- 🔄 **Zustand**
+- 📦 **Deployment**: Vercel
 
 ### Backend  
-- 🐍 **FastAPI** (высокопроизводительный Python)
-- 🗄️ **SQLAlchemy** (ORM) + SQLite
-- 🔐 **JWT Authentication** (безопасность)
-- 📝 **Pydantic** (валидация данных)
-- 🚀 **Deployment**: Railway (готов к деплою)
+- 🐍 **FastAPI**
+- 🗄️ **SQLAlchemy** (ORM) + PostgreSQL (Neon)
+- 🔐 **JWT Authentication**
+- 📝 **Pydantic**
+- 🚀 **Deployment**: Vercel Serverless Functions
 
 ## 📋 Возможности
 
@@ -37,44 +50,13 @@ Full-stack торговая площадка для игровых товаро�
 - ✅ **Responsive дизайн**
 - ✅ **Production-ready**
 
-## 🏗 Развертывание
-
-### Frontend (✅ Готов)
-Frontend уже развернут на Netlify: https://cheerful-cocada-c90721.netlify.app
-
-### Backend (📋 Готов к развертыванию)
-
-**Быстрый старт с Railway:**
-
-1. 🔗 **Подключение:**
-   - Откройте https://railway.app
-   - Нажмите "Start a New Project" → "Deploy from GitHub repo"
-   - Выберите репозиторий: `akira777777/game-marketplace`
-
-2. ⚙️ **Настройка переменных:**
-   ```env
-   SECRET_KEY=your-super-secret-production-key-min-32-chars
-   ALGORITHM=HS256
-   ACCESS_TOKEN_EXPIRE_MINUTES=30
-   ENVIRONMENT=production
-   DATABASE_URL=sqlite:///./game_marketplace.db
-   CORS_ORIGINS=["https://cheerful-cocada-c90721.netlify.app"]
-   ```
-
-3. 🌐 **Получение URL:**
-   - Settings → Domains → Generate Domain
-   - Скопируйте URL Railway
-
-4. 🔄 **Обновление Frontend:**
-   - В настройках Netlify добавьте переменную:
-   - `VITE_API_BASE_URL=https://your-railway-url.railway.app/api/v1`
-
-### Локальная разработка
+## 🏗 Локальная разработка
 
 ```bash
 # Backend
 cd backend
 pip install -r requirements.txt
+# Установите DATABASE_URL в .env (Neon PostgreSQL)
 python -m uvicorn app.main:app --reload --port 8001
 
 # Frontend  
@@ -88,71 +70,30 @@ npm run dev
 ```
 GameMarketplace/
 ├── 🎨 frontend/          # React + Vite + TypeScript
-│   ├── src/
-│   │   ├── components/   # UI компоненты
-│   │   ├── pages/        # Страницы приложения
-│   │   ├── services/     # API интеграция
-│   │   └── store/        # Управление состоянием
-│   ├── dist/            # Production build
-│   └── netlify.toml     # Netlify конфигурация
-│
-├── 🐍 backend/           # FastAPI + SQLAlchemy  
-│   ├── app/
-│   │   ├── api/         # API endpoints
-│   │   ├── core/        # Конфигурация и утилиты
-│   │   └── main.py      # Точка входа
-│   └── requirements.txt
-│
-├── 🚀 railway.toml       # Railway конфигурация
-├── 📦 netlify.toml       # Netlify конфигурация
+├── 🐍 backend/           # FastAPI + SQLAlchemy (PostgreSQL)
+├── 🚀 vercel.json        # Vercel конфигурация
 └── 🔧 .gitignore         # Git исключения
 ```
 
-## 🔧 Производительность
-
-### Frontend Metrics (Netlify)
-- ⚡ **Время загрузки**: 561ms
-- 📦 **JavaScript**: 291KB → 91KB (gzip)
-- 🎨 **CSS**: 23KB (Tailwind оптимизирован)
-- ✅ **HTTPS**: Включен с HSTS
-- 🔄 **SPA Routing**: Настроен
-
-### Backend Capabilities
-- 🔥 **FastAPI**: До 10,000+ req/sec
-- 🗄️ **SQLite**: Подходит для средних нагрузок
-- 🔐 **JWT**: Stateless аутентификация
-- 📊 **Auto Docs**: Swagger UI встроен
-
 ## 🔐 Безопасность
 
-- ✅ **JWT токены** с истечением срока
-- ✅ **CORS** настроен для production URL
-- ✅ **HTTPS** принудительный
+- ✅ **JWT токены**
+- ✅ **CORS** настроен для production
+- ✅ **PostgreSQL (Neon)** с SSL
 - ✅ **Валидация данных** Pydantic
-- ⚠️ **TODO**: Настроить CSP и Security Headers
-
-## 📈 Масштабирование
-
-**Готов к росту:**
-- 🔄 **Database**: Легкая миграция на PostgreSQL  
-- 🐳 **Containers**: Docker конфигурация готова
-- ☁️ **Cloud**: Railway автомасштабирование
-- 💾 **CDN**: Netlify Edge обеспечивает глобальное кеширование
 
 ## 🤝 Вклад в проект
 
 ```bash
 git clone https://github.com/akira777777/game-marketplace.git
 cd game-marketplace
-# Следуйте инструкциям локальной разработки
 ```
 
 ## 📄 Лицензия
 
-MIT License - используйте свободно в коммерческих и личных проектах.
+MIT License
 
 ---
 
-**🎯 Статус проекта**: Production Ready  
-**🔗 Repository**: https://github.com/akira777777/game-marketplace  
+**🎯 Статус проекта**: Production Ready (Vercel + Neon)
 **👨‍💻 Developed**: Full-stack TypeScript/Python архитектура
