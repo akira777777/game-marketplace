@@ -24,7 +24,6 @@ pillow==10.1.0
 
 # Async & WebSocket
 websockets==12.0
-redis==5.0.1
 
 # HTTP Requests
 httpx==0.25.2

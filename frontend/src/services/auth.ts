@@ -20,9 +20,8 @@ export const authService = {
   async logout(): Promise<void> {
     try {
       await api.post('/auth/logout');
-    } catch (error) {
-      // Ignore errors on logout
-      console.log('Logout error:', error);
+    } catch {
+      // Ignore errors on logout - user is logging out anyway
     }
   }
 };

@@ -21,10 +21,11 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await login({ email: formData.email, password: formData.password } as any);
+      await login({ email: formData.email, password: formData.password });
       navigate('/');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Ошибка входа');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Ошибка входа');
     } finally {
       setIsLoading(false);
     }

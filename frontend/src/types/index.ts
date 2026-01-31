@@ -66,7 +66,7 @@ export interface Lot {
   seller_id: number;
   game_id: number;
   category_id: number;
-  item_details?: Record<string, any>;
+  item_details?: Record<string, unknown>;
   images?: string[];
   status: 'active' | 'sold' | 'inactive' | 'moderation';
   is_auto_delivery: boolean;

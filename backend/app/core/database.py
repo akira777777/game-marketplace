@@ -14,16 +14,33 @@ from .config import settings
 
 logger = logging.getLogger(__name__)
 
+# PostgreSQL (Neon) configuration
+# Engine configuration
+engine_kwargs = {
+    "pool_pre_ping": True,
+    "echo": settings.DATABASE_ECHO,
+    "pool_size": 5,
+    "max_overflow": 10,
+    "pool_timeout": 30,
+    "pool_recycle": 1800,
+}
+
 # Database engines
 engine = create_engine(
-    settings.DATABASE_URL,
-    pool_pre_ping=True,
-    echo=settings.DATABASE_ECHO,
+    settings.database_url_sync,
+    **engine_kwargs
 )
 
+# Async engine with appropriate configuration
+async_engine_kwargs = {
+    "echo": settings.DATABASE_ECHO,
+    "pool_size": 5,
+    "max_overflow": 10,
+}
+
 async_engine = create_async_engine(
-    settings.DATABASE_URL_ASYNC,
-    echo=settings.DATABASE_ECHO,
+    settings.database_url_async,
+    **async_engine_kwargs
 )
 
 # Session factories

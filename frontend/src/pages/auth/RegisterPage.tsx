@@ -40,8 +40,9 @@ export const RegisterPage: React.FC = () => {
         password: formData.password,
       });
       navigate('/');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Ошибка регистрации');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Ошибка регистрации');
     } finally {
       setIsLoading(false);
     }
