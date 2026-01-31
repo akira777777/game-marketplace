@@ -4,19 +4,13 @@
 """
 import sys
 import os
-import hashlib
 
 sys.path.insert(0, os.path.abspath("."))
 
+from app.core.auth import get_password_hash
 from app.core.database import get_db
 from app.models import User, Game, Lot
 from sqlalchemy.orm import Session
-
-
-def simple_hash(password: str) -> str:
-    """Простое хеширование для тестов"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
 
 def create_test_data():
     """Создает тестовые данные"""
@@ -29,7 +23,7 @@ def create_test_data():
             test_user = User(
                 username="testuser",
                 email="test@example.com",
-                hashed_password=simple_hash("testpass123"),
+                hashed_password=get_password_hash("testpass123"),
                 is_active=True,
                 display_name="Тестовый пользователь",
                 bio="Опытный продавец игровых аккаунтов",
