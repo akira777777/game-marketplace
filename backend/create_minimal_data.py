@@ -8,12 +8,16 @@ import os
 sys.path.insert(0, os.path.abspath("."))
 
 from app.core.auth import get_password_hash
-from app.core.database import get_db
-from app.models import User, Game, Lot
+from app.core.database import get_db, engine, Base
+from app.models import User, Game, Lot, LotStatus, Category
 from sqlalchemy.orm import Session
 
 def create_test_data():
     """Создает тестовые данные"""
+    # Создаем таблицы если их нет
+    print("⏳ Создание таблиц...")
+    Base.metadata.create_all(bind=engine)
+    
     db: Session = next(get_db())
 
     try:
@@ -60,7 +64,24 @@ def create_test_data():
                 db.flush()
             games.append(game)
 
-        # Создаем тестовые лоты (без категорий)
+        # Создаем категории
+        categories_data = [
+            {"name": "Аккаунты", "slug": "accounts", "game_id": games[0].id},
+            {"name": "Золото", "slug": "gold", "game_id": games[0].id},
+            {"name": "Скины", "slug": "skins", "game_id": games[1].id},
+            {"name": "Рейтинг", "slug": "boost", "game_id": games[2].id},
+        ]
+        
+        categories = []
+        for cat_data in categories_data:
+            cat = db.query(Category).filter(Category.name == cat_data["name"], Category.game_id == cat_data["game_id"]).first()
+            if not cat:
+                cat = Category(**cat_data)
+                db.add(cat)
+                db.flush()
+            categories.append(cat)
+
+        # Создаем тестовые лоты
         lots_data = [
             {
                 "title": "WoW аккаунт с редкими маунтами",
@@ -68,8 +89,8 @@ def create_test_data():
                 "price": 15000,
                 "game_id": games[0].id,
                 "seller_id": test_user.id,
-                "status": "active",
-                "category_id": 1,  # временное значение
+                "status": LotStatus.ACTIVE,
+                "category_id": categories[0].id,
             },
             {
                 "title": "CS2 Prime Global Elite",
@@ -77,8 +98,8 @@ def create_test_data():
                 "price": 8500,
                 "game_id": games[1].id,
                 "seller_id": test_user.id,
-                "status": "active",
-                "category_id": 1,
+                "status": LotStatus.ACTIVE,
+                "category_id": categories[2].id,
             },
             {
                 "title": "Dota 2 Divine аккаунт",
@@ -86,8 +107,8 @@ def create_test_data():
                 "price": 12000,
                 "game_id": games[2].id,
                 "seller_id": test_user.id,
-                "status": "active",
-                "category_id": 1,
+                "status": LotStatus.ACTIVE,
+                "category_id": categories[3].id,
             },
             {
                 "title": "Valorant Immortal ранг",
@@ -95,8 +116,8 @@ def create_test_data():
                 "price": 7500,
                 "game_id": games[3].id,
                 "seller_id": test_user.id,
-                "status": "active",
-                "category_id": 1,
+                "status": LotStatus.ACTIVE,
+                "category_id": categories[0].id,
             },
         ]
 
